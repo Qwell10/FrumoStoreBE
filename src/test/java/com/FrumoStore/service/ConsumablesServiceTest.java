@@ -1,6 +1,6 @@
 package com.FrumoStore.service;
 
-import com.FrumoStore.incomingConsumablesRepository.IncomingConsumablesRep;
+import com.FrumoStore.consumablesRepository.ConsumablesRepository;
 import com.FrumoStore.utility.DateFormatChecker;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -16,20 +16,20 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class IncomingConsumablesServiceTest {
+class ConsumablesServiceTest {
 
     @Mock
-    IncomingConsumablesRep incomingConsumablesRep;
+    ConsumablesRepository consumablesRepository;
 
     @Mock
     DateFormatChecker dateFormatChecker;
 
     @InjectMocks
-    IncomingConsumablesService incomingConsumablesService;
+    ConsumablesService consumablesService;
 
     @Test
     public void incomeToWarehouse_saveWithNullDate() {
-        incomingConsumablesService.incomeToWarehouse(800, null);
+        consumablesService.incomeToWarehouse(800, null);
 
         verify(dateFormatChecker, never()).parseStringToLocalDate(any());
     }
@@ -40,16 +40,39 @@ class IncomingConsumablesServiceTest {
 
         when(dateFormatChecker.parseStringToLocalDate(any())).thenReturn(expectedDate);
 
-        incomingConsumablesService.incomeToWarehouse(700, "01-06-2024");
+        consumablesService.incomeToWarehouse(700, "01-06-2024");
 
-        verify(incomingConsumablesRep).save(argThat(
+        verify(consumablesRepository).save(argThat(
                 entity -> entity.getWeight() == 700 && entity.getDate().equals(expectedDate)));
     }
+
+
+
+    @Test
+    public void incomeToWarehouse_noStockInDB() {
+        when(consumablesService.getStockBalance()).thenReturn(0.0);
+
+        consumablesService.incomeToWarehouse(600, "01-06-2024");
+
+        verify(consumablesRepository).save(argThat(
+                entity -> entity.getStockBalance() == 600));
+    }
+
+    @Test
+    public void incomeToWarehouse_StockInDB() {
+        when(consumablesService.getStockBalance()).thenReturn(305.5);
+
+        consumablesService.incomeToWarehouse(300, "01-06-2024");
+
+        verify(consumablesRepository).save(argThat(
+                entity -> entity.getStockBalance() == 605.5));
+    }
+
 
     @Test
     public void incomeToWarehouse_throwIllegalArgumentException() {
         Exception e = assertThrows(IllegalArgumentException.class,
-                () -> incomingConsumablesService.incomeToWarehouse(-50, null));
+                () -> consumablesService.incomeToWarehouse(-50, null));
 
         assertEquals("Weight cannot be negative.", e.getMessage());
     }
