@@ -1,4 +1,4 @@
-package com.FrumoStore.consumablesRepository;
+package com.FrumoStore.repository;
 
 import com.FrumoStore.entity.WasteEntity;
 import org.springframework.data.jpa.repository.JpaRepository;

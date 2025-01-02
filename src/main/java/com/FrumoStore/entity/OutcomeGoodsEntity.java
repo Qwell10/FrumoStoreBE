@@ -14,7 +14,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @Getter
 @Setter
-public class FrumoDeliveryEntity {
+public class OutcomeGoodsEntity {
 
     @Id
     @SequenceGenerator(
@@ -28,6 +28,12 @@ public class FrumoDeliveryEntity {
     )
     private long id;
     private long boxes;
-    private long totalWeight;
+    private double totalWeight;
     private LocalDate date;
+
+    public OutcomeGoodsEntity(int boxes, double totalWeight, LocalDate date) {
+        this.boxes = boxes;
+        this.totalWeight = totalWeight;
+        this.date = date;
+    }
 }

@@ -9,12 +9,12 @@ import lombok.Setter;
 import java.time.LocalDate;
 
 @Entity
-@Table(name = "consumables_entity")
+@Table
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ConsumablesEntity {
+public class IncomeGoodsEntity {
 
     @Id
     @SequenceGenerator(
@@ -29,12 +29,10 @@ public class ConsumablesEntity {
     private long id;
     private double weight;
     private LocalDate date;
-    private Double stockBalance;
 
-    public ConsumablesEntity(double weight, LocalDate date, Double stockBalance) {
+    public IncomeGoodsEntity(double weight, LocalDate date) {
         this.weight = weight;
         this.date = date;
-        this.stockBalance = stockBalance;
     }
 }
 

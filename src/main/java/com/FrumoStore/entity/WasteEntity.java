@@ -28,4 +28,9 @@ public class WasteEntity {
     private long id;
     private double weight;
     private LocalDate date;
+
+    public WasteEntity(double weight, LocalDate date) {
+        this.weight = weight;
+        this.date = date;
+    }
 }
