@@ -71,7 +71,7 @@ public class GoodsService {
     }
 
 
-    private double getStockBalance() {
+    public double getStockBalance() {
         Double stockBalance = stockBalanceRepository.findLastStockBalance();
         if (stockBalance == null || stockBalance == 0) {
             return 0;

@@ -1,4 +1,4 @@
-package dto;
+package com.FrumoStore.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
