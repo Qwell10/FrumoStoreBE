@@ -28,10 +28,27 @@ public class UserService {
 
         UserEntity user = userOptional.get();
 
+        if (user.getPassword().equals(enteredPassword)) {
+            return user;
+
+        } else throw new InvalidPasswordException("Invalid password");
+    }
+
+/*
+    public UserEntity loginUser(String nickname, String enteredPassword) {
+        Optional<UserEntity> userOptional = userRepository.findByNickname(nickname);
+
+        if (userOptional.isEmpty()) {
+            throw new UserNotFoundException("User %s not found", nickname);
+        }
+
+        UserEntity user = userOptional.get();
+
         if (encoder.authenticate(enteredPassword, user.getPassword())) {
             return user;
 
         } else throw new InvalidPasswordException("Invalid password");
     }
+*/
 
 }

@@ -29,13 +29,17 @@ public class UserController {
             UserEntity user = userService.loginUser(userDto.getNickname(), userDto.getPassword());
 
             HttpSession session = request.getSession();
-            String sessionId = UUID.randomUUID().toString();
-            session.setAttribute("sessionId", sessionId);
             session.setAttribute("userId", user.getId());
+            session.setMaxInactiveInterval(1800); //1800 sec = 30 min
+
+            return new LoginResponse(true, "You were logged in.");
+
         } catch (UserNotFoundException e) {
-            throw e;
+            return new LoginResponse(false, "Invalid username or password.");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new LoginResponse(false, "An error occurred during login.");
         }
-        return new LoginResponse(true, "You were logged in.");
     }
 
     @ExceptionHandler(value = UserNotFoundException.class)
