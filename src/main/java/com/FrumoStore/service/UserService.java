@@ -1,5 +1,6 @@
 package com.FrumoStore.service;
 
+import com.FrumoStore.dto.UserDto;
 import com.FrumoStore.entity.UserEntity;
 import com.FrumoStore.exception.InvalidPasswordException;
 import com.FrumoStore.exception.UserNotFoundException;
@@ -19,6 +20,20 @@ public class UserService {
     @Autowired
     BCryptPasswordEncoding encoder;
 
+    public void registerUser(UserDto userDto) {
+        if (userDto.getNickname() == null || userDto.getNickname().isEmpty()) {
+            throw new IllegalArgumentException("Nickname cannot be empty");
+        } else if (userDto.getPassword() == null || userDto.getPassword().isEmpty()) {
+            throw new IllegalArgumentException("Password cannot be empty");
+        }
+
+        String encodedPassword = encoder.encodePassword(userDto.getPassword());
+
+        UserEntity userEntity = new UserEntity(userDto.getNickname(), encodedPassword);
+
+        userRepository.save(userEntity);
+    }
+
     public UserEntity loginUser(String nickname, String enteredPassword) {
         Optional<UserEntity> userOptional = userRepository.findByNickname(nickname);
 
@@ -28,7 +43,7 @@ public class UserService {
 
         UserEntity user = userOptional.get();
 
-        if (user.getPassword().equals(enteredPassword)) {
+        if (encoder.authenticate(enteredPassword, user.getPassword())) {
             return user;
 
         } else throw new InvalidPasswordException("Invalid password");
@@ -44,7 +59,7 @@ public class UserService {
 
         UserEntity user = userOptional.get();
 
-        if (encoder.authenticate(enteredPassword, user.getPassword())) {
+        if (user.getPassword().equals(enteredPassword)) {
             return user;
 
         } else throw new InvalidPasswordException("Invalid password");

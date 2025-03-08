@@ -11,19 +11,18 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.UUID;
-
 @RestController
-@RequestMapping("login")
+@RequestMapping("user")
 @CrossOrigin
 public class UserController {
 
     @Autowired
     private UserService userService;
 
-    @PostMapping
+    @PostMapping("/login")
     public LoginResponse loginUser(@RequestBody UserDto userDto, HttpServletRequest request) {
         try {
             UserEntity user = userService.loginUser(userDto.getNickname(), userDto.getPassword());
@@ -39,6 +38,17 @@ public class UserController {
         } catch (Exception e) {
             e.printStackTrace();
             return new LoginResponse(false, "An error occurred during login.");
+        }
+    }
+
+    @PostMapping("/register")
+    @ResponseStatus(HttpStatus.CREATED)
+    public ResponseEntity<String> registerUser(@RequestBody UserDto userDto) {
+        try {
+            userService.registerUser(userDto);
+            return ResponseEntity.noContent().build();
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
 
